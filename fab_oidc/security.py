@@ -9,7 +9,7 @@ log = getLogger(__name__)
 class OIDCSecurityManagerMixin:
 
     def __init__(self, appbuilder):
-        super().__init__(appbuilder)
+        super(OIDCSecurityManagerMixin, self).__init__(appbuilder)
         if self.auth_type == AUTH_OID:
             self.oid = OpenIDConnect(self.appbuilder.get_app)
             self.authoidview = AuthOIDCView
