@@ -6,7 +6,7 @@ from logging import getLogger
 log = getLogger(__name__)
 
 
-class OIDCSecurityManagerMixin:
+class OIDCSecurityManagerMixin(object):
 
     def __init__(self, appbuilder):
         super(OIDCSecurityManagerMixin, self).__init__(appbuilder)
