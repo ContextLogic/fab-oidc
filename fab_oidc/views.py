@@ -5,14 +5,8 @@ from flask_login import login_user
 from flask_admin import expose
 from urllib.parse import quote
 
-
-# Set the OIDC field that should be used as a username
-USERNAME_OIDC_FIELD = os.getenv('USERNAME_OIDC_FIELD', default='sub')
-FIRST_NAME_OIDC_FIELD = os.getenv('FIRST_NAME_OIDC_FIELD',
-                                  default='nickname')
-LAST_NAME_OIDC_FIELD = os.getenv('LAST_NAME_OIDC_FIELD',
-                                 default='name')
-
+REGISTRATION_ROLE = os.getenv('OIDC_DEFAULT_REGISTRATION_ROLE',
+                              default='User')
 
 class AuthOIDCView(AuthOIDView):
 
@@ -28,18 +22,16 @@ class AuthOIDCView(AuthOIDView):
 
             if user is None:
                 info = oidc.user_getinfo([
-                    USERNAME_OIDC_FIELD,
-                    FIRST_NAME_OIDC_FIELD,
-                    LAST_NAME_OIDC_FIELD,
                     'email',
                 ])
-
+                email = info.get('email')
+                username = email.split('@')[0]
                 user = sm.add_user(
-                    username=info.get(USERNAME_OIDC_FIELD),
-                    first_name=info.get(FIRST_NAME_OIDC_FIELD),
-                    last_name=info.get(LAST_NAME_OIDC_FIELD),
-                    email=info.get('email'),
-                    role=sm.find_role(sm.auth_user_registration_role)
+                    username=username,
+                    first_name=username,
+                    last_name='airflow',
+                    email=email,
+                    role=sm.find_role(REGISTRATION_ROLE)
                 )
 
             login_user(user, remember=False)
